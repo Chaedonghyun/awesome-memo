@@ -1,8 +1,46 @@
+// JavaScript문
+async function editMemo(event) {
+  const id = event.target.dataset.id;
+  const editInput = prompt("수정 할 값을 입력하세요");
+  const res = await fetch(`/memos/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: id, //id,
+      content: editInput,
+    }),
+  });
+  readMemo();
+}
+
+async function deleteMemo(event) {
+  const id = event.target.dataset.id;
+  const res = await fetch(`/memos/${id}`, {
+    method: "DELETE",
+  });
+  readMemo();
+}
+
 function displayMemo(memo) {
   const ul = document.querySelector("#memo-ul");
   const li = document.createElement("li");
-  li.innerText = `[id:${memo.id}] ${memo.content}`;
+  const editBtn = document.createElement("button");
+  li.innerText = ` ${memo.content}`;
+
+  editBtn.innerText = "수정하기";
+  editBtn.addEventListener("click", editMemo);
+  editBtn.dataset.id = memo.id;
+
+  const delBtn = document.createElement("button");
+  delBtn.innerText = "삭제";
+  delBtn.addEventListener("click", deleteMemo);
+  delBtn.dataset.id = memo.id;
+
   ul.appendChild(li);
+  li.appendChild(editBtn);
+  li.append(delBtn);
 }
 async function readMemo() {
   const res = await fetch("/memos");
